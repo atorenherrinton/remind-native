@@ -1,21 +1,35 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { View } from "react-native";
+import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
+import { Provider as StoreProvider, useSelector } from "react-redux";
+import { selectUid } from "./slices/authenticate.slice";
+import store from "./app/store";
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+import Authenticate from "./pages/authenticate/authenticate";
+import Main from "./pages/main/main";
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+const theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: "#242038",
+    accent: "#725AC1",
   },
-});
+};
+
+const App = () => {
+  const uid = useSelector(selectUid);
+  return <View>{uid ? <Main /> : <Authenticate />}</View>;
+};
+
+const WrappedApp = () => {
+  return (
+    <StoreProvider store={store}>
+      <PaperProvider theme={theme}>
+        <App />
+      </PaperProvider>
+    </StoreProvider>
+  );
+};
+
+export default WrappedApp;
